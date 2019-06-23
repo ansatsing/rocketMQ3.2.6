@@ -102,6 +102,9 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
 
     private RPCHook rpcHook;
 
+    /**
+     * channel包装器
+     */
     class ChannelWrapper {
         private final ChannelFuture channelFuture;
 
@@ -135,6 +138,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingCommand msg) throws Exception {
+            System.out.println("NettyRemotingClient IO 读事件发生");
             processMessageReceived(ctx, msg);
 
         }
@@ -355,7 +359,12 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
         }
     }
 
-
+    /**
+     * 获取和创建指定addr的channel
+     * @param addr  192.168.0.9:8956
+     * @return
+     * @throws InterruptedException
+     */
     private Channel getAndCreateChannel(final String addr) throws InterruptedException {
         if (null == addr)
             return getAndCreateNameserverChannel();
@@ -368,7 +377,11 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
         return this.createChannel(addr);
     }
 
-
+    /**
+     * 获取和创建命名服务器的channel
+     * @return
+     * @throws InterruptedException
+     */
     private Channel getAndCreateNameserverChannel() throws InterruptedException {
         String addr = this.namesrvAddrChoosed.get();
         if (addr != null) {
@@ -418,7 +431,12 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
         return null;
     }
 
-
+    /**
+     * 真正创建channel的方法+
+     * @param addr
+     * @return
+     * @throws InterruptedException
+     */
     private Channel createChannel(final String addr) throws InterruptedException {
         ChannelWrapper cw = this.channelTables.get(addr);
         if (cw != null && cw.isOK()) {
@@ -471,7 +489,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
 
         if (cw != null) {
             ChannelFuture channelFuture = cw.getChannelFuture();
-            if (channelFuture.awaitUninterruptibly(this.nettyClientConfig.getConnectTimeoutMillis())) {
+            if (channelFuture.awaitUninterruptibly(this.nettyClientConfig.getConnectTimeoutMillis())) {//在指定时间内等待连接，连接成功返回true,否则false
                 if (cw.isOK()) {
                     log.info("createChannel: connect remote host[{}] success, {}", addr,
                         channelFuture.toString());
@@ -608,7 +626,17 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
         this.processorTable.put(requestCode, pair);
     }
 
-
+    /**
+     * 同步发送数据
+     * @param addr localhost:8888
+     * @param request  请求数据
+     * @param timeoutMillis 响应超时时间，毫秒
+     * @return
+     * @throws InterruptedException
+     * @throws RemotingConnectException
+     * @throws RemotingSendRequestException
+     * @throws RemotingTimeoutException
+     */
     @Override
     public RemotingCommand invokeSync(String addr, final RemotingCommand request, long timeoutMillis)
             throws InterruptedException, RemotingConnectException, RemotingSendRequestException,

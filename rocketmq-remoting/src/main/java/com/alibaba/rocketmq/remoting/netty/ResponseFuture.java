@@ -46,7 +46,13 @@ public class ResponseFuture {
     // 保证回调的callback方法至多至少只被执行一次
     private final AtomicBoolean executeCallbackOnlyOnce = new AtomicBoolean(false);
 
-
+    /**
+     *
+     * @param opaque
+     * @param timeoutMillis
+     * @param invokeCallback
+     * @param once 默认2048个信号量
+     */
     public ResponseFuture(int opaque, long timeoutMillis, InvokeCallback invokeCallback,
             SemaphoreReleaseOnlyOnce once) {
         this.opaque = opaque;

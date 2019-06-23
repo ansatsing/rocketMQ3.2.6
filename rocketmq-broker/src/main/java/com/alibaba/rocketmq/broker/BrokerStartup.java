@@ -78,7 +78,11 @@ public class BrokerStartup {
         start(createBrokerController(args));
     }
 
-
+    /**
+     *   加载并设置各类[brokerConfig,nettyClientConfig,nettyServerConfig,messageStoreConfig]配置参数，然后初始化broker.
+     * @param args
+     * @return
+     */
     public static BrokerController createBrokerController(String[] args) {
         System.setProperty(RemotingCommand.RemotingVersionKey, Integer.toString(MQVersion.CurrentVersion));
         // Socket发送缓冲区大小
@@ -229,7 +233,7 @@ public class BrokerStartup {
                 System.exit(-3);
             }
 
-            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {//钩子线程可能出现并发情况
                 private volatile boolean hasShutdown = false;
                 private AtomicInteger shutdownTimes = new AtomicInteger(0);
 

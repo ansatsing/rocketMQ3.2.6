@@ -86,7 +86,9 @@ public abstract class ConfigManager {
         return true;
     }
 
-
+    /**
+     * 配置持久化到文件
+     */
     public synchronized void persist() {
         String jsonString = this.encode(true);
         if (jsonString != null) {

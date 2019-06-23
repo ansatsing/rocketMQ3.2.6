@@ -63,6 +63,11 @@ public abstract class NettyRemotingAbstract {
     protected final Semaphore semaphoreAsync;
 
     // 缓存所有对外请求
+    /***
+     * opaque表示请求发起方在同个连接上不同的请求标识代码，每次发送一个消息的时候，
+     * 可以选择同步阻塞/异步非阻塞的方式。无论是哪种通信方式，
+     * 都会保存请求操作码至ResponseFuture的Map映射—responseTable中。
+     */
     protected final ConcurrentHashMap<Integer /* opaque */, ResponseFuture> responseTable =
             new ConcurrentHashMap<Integer, ResponseFuture>(256);
 
@@ -110,6 +115,7 @@ public abstract class NettyRemotingAbstract {
 
             while (!this.isStoped()) {
                 try {
+                    //Retrieves and removes the head of this queue, waiting up to the specified wait time if necessary for an element to become available.
                     NettyEvent event = this.eventQueue.poll(3000, TimeUnit.MILLISECONDS);
                     if (event != null && listener != null) {
                         switch (event.getType()) {
@@ -354,9 +360,11 @@ public abstract class NettyRemotingAbstract {
                 public void operationComplete(ChannelFuture f) throws Exception {
                     if (f.isSuccess()) {
                         responseFuture.setSendRequestOK(true);
+                        System.out.println("11111111111");
                         return;
                     }
                     else {
+                        System.out.println("22222222222");
                         responseFuture.setSendRequestOK(false);
                     }
 
@@ -365,6 +373,7 @@ public abstract class NettyRemotingAbstract {
                     responseFuture.putResponse(null);
                     plog.warn("send a request command to channel <" + channel.remoteAddress() + "> failed.");
                     plog.warn(request.toString());
+                    System.out.println("33333333333");
                 }
             });
 

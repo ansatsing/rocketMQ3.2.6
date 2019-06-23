@@ -454,7 +454,7 @@ public class TopicConfigManager extends ConfigManager {
 
 
     @Override
-    public String configFilePath() {
+    public String configFilePath() {//C:\Users\Administrator\store\config\topics.json
         return BrokerPathConfigHelper.getTopicConfigPath(this.brokerController.getMessageStoreConfig()
             .getStorePathRootDir());
     }

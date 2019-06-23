@@ -48,11 +48,11 @@ public class RemotingCommand {
     /**
      * Header 部分
      */
-    private int code;
+    private int code;//数据类型，不同的code对应NettyRequestProcessor不一样，final Pair<NettyRequestProcessor, ExecutorService> matched = this.processorTable.get(cmd.getCode());获取一对请求处理器和线程组
     private LanguageCode language = LanguageCode.JAVA;
     private int version = 0;
     private int opaque = RequestId.getAndIncrement();
-    private int flag = 0;
+    private int flag = 0;//0代表请求，1代表响应 相对于一端（客户端或者服务端）
     private String remark;
     private HashMap<String, String> extFields;
 

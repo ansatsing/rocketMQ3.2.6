@@ -19,10 +19,11 @@ public class SyncInvokeTest {
         RemotingServer server = NettyRPCTest.createRemotingServer();
         RemotingClient client = NettyRPCTest.createRemotingClient();
 
-        for (int i = 0; i < 100; i++) {
+        //for (int i = 0; i < 100; i++) {
+        for (int i = 0; i <1; i++) {
             try {
                 RemotingCommand request = RemotingCommand.createRequestCommand(0, null);
-                RemotingCommand response = client.invokeSync("localhost:8888", request, 1000 * 3);
+                RemotingCommand response = client.invokeSync("localhost:8888", request, 100000 * 3);
                 System.out.println(i + "\t" + "invoke result = " + response);
                 assertTrue(response != null);
             }

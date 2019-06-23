@@ -177,7 +177,7 @@ public class BrokerController {
 
     public boolean initialize() {
         boolean result = true;
-
+        //1,加载之前存在的topic[C:\Users\Administrator\store\config\topics.json]
         result = result && this.topicConfigManager.load();
 
         result = result && this.consumerOffsetManager.load();
