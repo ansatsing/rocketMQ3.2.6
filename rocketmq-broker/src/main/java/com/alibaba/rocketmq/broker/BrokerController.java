@@ -174,17 +174,22 @@ public class BrokerController {
             .getNettyServerConfig().getListenPort()));
     }
 
-
+    /**
+     * 初始化操作
+     * @return
+     */
     public boolean initialize() {
         boolean result = true;
-        //1,加载之前存在的topic[C:\Users\Administrator\store\config\topics.json]
+        //1,加载之前存在的topic配置[C:\Users\Administrator\store\config\topics.json]
         result = result && this.topicConfigManager.load();
-
+        //2，加载之前的消费进度[C:\Users\Administrator\store\config\consumerOffset.json]
         result = result && this.consumerOffsetManager.load();
+        //3,加载之前的订阅组情况[C:\Users\Administrator\store\config\subscriptionGroup.json]
         result = result && this.subscriptionGroupManager.load();
 
         if (result) {
             try {
+                //4,创建存储层默认实现对象
                 this.messageStore = new DefaultMessageStore(this.messageStoreConfig, this.brokerStatsManager);
             }
             catch (IOException e) {
@@ -192,13 +197,14 @@ public class BrokerController {
                 e.printStackTrace();
             }
         }
-
+        //5，加载存储数据
         result = result && this.messageStore.load();
 
         if (result) {
+            //6，开启broker服务
             this.remotingServer =
                     new NettyRemotingServer(this.nettyServerConfig, this.clientHousekeepingService);
-
+            //7，创建发送消息线程池
             this.sendMessageExecutor = new ThreadPoolExecutor(//
                 this.brokerConfig.getSendMessageThreadPoolNums(),//
                 this.brokerConfig.getSendMessageThreadPoolNums(),//
@@ -206,7 +212,7 @@ public class BrokerController {
                 TimeUnit.MILLISECONDS,//
                 this.sendThreadPoolQueue,//
                 new ThreadFactoryImpl("SendMessageThread_"));
-
+            //8，创建拉信息线程池他如果提出
             this.pullMessageExecutor = new ThreadPoolExecutor(//
                 this.brokerConfig.getPullMessageThreadPoolNums(),//
                 this.brokerConfig.getPullMessageThreadPoolNums(),//
@@ -214,22 +220,24 @@ public class BrokerController {
                 TimeUnit.MILLISECONDS,//
                 this.pullThreadPoolQueue,//
                 new ThreadFactoryImpl("PullMessageThread_"));
-
+            //9，broker管理线程池
             this.adminBrokerExecutor =
                     Executors.newFixedThreadPool(this.brokerConfig.getAdminBrokerThreadPoolNums(),
                         new ThreadFactoryImpl("AdminBrokerThread_"));
-
+            //10，客户端管理线程池
             this.clientManageExecutor =
                     Executors.newFixedThreadPool(this.brokerConfig.getClientManageThreadPoolNums(),
                         new ThreadFactoryImpl("ClientManageThread_"));
-
+            //11，NettyRemotingServer注册消息处理器【从消费端或者生产端收到请求包如何处理？这步决定】
             this.registerProcessor();
 
             this.brokerStats = new BrokerStats((DefaultMessageStore) this.messageStore);
 
             // TODO remove in future
+            //距离下一天多长时间，单位毫秒，比如现在是20190623 16:34,则initialDelay = 20190624 00:00 - 20190623 16:34
             final long initialDelay = UtilAll.computNextMorningTimeMillis() - System.currentTimeMillis();
-            final long period = 1000 * 60 * 60 * 24;
+            final long period = 1000 * 60 * 60 * 24;//毫秒为单位的24小时
+            //每天00：00统计过去一天内生产消息总数以及消费消息总数
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -241,7 +249,7 @@ public class BrokerController {
                     }
                 }
             }, initialDelay, period, TimeUnit.MILLISECONDS);
-
+            //定时消费进度刷盘
             this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -308,6 +316,7 @@ public class BrokerController {
                 }, 1000 * 10, 1000 * 60, TimeUnit.MILLISECONDS);
             }
             else {
+                //每隔一分钟打印出master和slave差距
                 this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
                     @Override
@@ -536,22 +545,27 @@ public class BrokerController {
 
     public void start() throws Exception {
         if (this.messageStore != null) {
+            //启动存储服务
             this.messageStore.start();
         }
 
         if (this.remotingServer != null) {
+            //启动netty服务端，对外提供生产消息以及消费消息功能
             this.remotingServer.start();
         }
 
         if (this.brokerOuterAPI != null) {
+            //作为client连接命名服务器
             this.brokerOuterAPI.start();
         }
 
         if (this.pullRequestHoldService != null) {
+            // 拉消息请求管理，如果拉不到消息，则在这里Hold住，等待消息到来
             this.pullRequestHoldService.start();
         }
 
         if (this.clientHousekeepingService != null) {
+            //定期检测客户端连接，清除不活动的连接
             this.clientHousekeepingService.start();
         }
 

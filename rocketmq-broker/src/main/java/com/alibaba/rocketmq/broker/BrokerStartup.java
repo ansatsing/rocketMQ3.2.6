@@ -229,7 +229,7 @@ public class BrokerStartup {
                 messageStoreConfig);
             boolean initResult = controller.initialize();
             if (!initResult) {
-                controller.shutdown();
+                controller.shutdown();//安全的关闭线程池以及一些服务
                 System.exit(-3);
             }
 
@@ -263,7 +263,11 @@ public class BrokerStartup {
         return null;
     }
 
-
+    /**
+     * 启动服务以及定时任务
+     * @param controller
+     * @return
+     */
     public static BrokerController start(BrokerController controller) {
         try {
             // 启动服务控制对象

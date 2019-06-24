@@ -29,7 +29,7 @@ public class StorePathConfigHelper {
         return rootDir + File.separator + "index";
     }
 
-
+    //checkpoint：文件检查点，存储 commitlog 、consumequeue、indexfile 最后一次刷盘时间或时间戳
     public static String getStoreCheckpoint(final String rootDir) {
         return rootDir + File.separator + "checkpoint";
     }
