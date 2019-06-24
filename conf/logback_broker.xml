@@ -173,32 +173,37 @@
 	<logger name="RocketmqBroker" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqBrokerAppender" />
-		<appender-ref ref="STDOUT" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqCommon" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqBrokerAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqStore" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqStoreAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqStoreError" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqStoreErrorAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqTransaction" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqTransactionAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqRebalanceLock" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqRebalanceLockAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqRemoting" additivity="false">
@@ -209,10 +214,12 @@
 	<logger name="RocketmqStats" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqStatsAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="DefaultAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</root>
 </configuration>

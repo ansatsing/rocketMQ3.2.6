@@ -51,20 +51,24 @@
 	<logger name="RocketmqNamesrv" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqNamesrvAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqCommon" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqNamesrvAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<logger name="RocketmqRemoting" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="RocketmqNamesrvAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</logger>
 
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="DefaultAppender" />
+		<appender-ref ref="STDOUT" /><!--生产环境去掉-->
 	</root>
 </configuration>
