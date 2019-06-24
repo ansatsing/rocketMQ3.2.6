@@ -43,7 +43,7 @@ import com.alibaba.rocketmq.common.constant.LoggerName;
  * @since 2013-7-21
  */
 public class MapedFile extends ReferenceResource {
-    public static final int OS_PAGE_SIZE = 1024 * 4;
+    public static final int OS_PAGE_SIZE = 1024 * 4;//4k
     private static final Logger log = LoggerFactory.getLogger(LoggerName.StoreLoggerName);
     // 当前JVM中映射的虚拟内存总大小
     private static final AtomicLong TotalMapedVitualMemory = new AtomicLong(0);

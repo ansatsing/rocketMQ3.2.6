@@ -25,9 +25,21 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 2013-7-21
  */
 public abstract class ReferenceResource {
+    /**
+     * 引用计数，大于0资源可用未被shutdown[可用available=true]，小于等于0可以回收[不可用available=false]
+     */
     protected final AtomicLong refCount = new AtomicLong(1);
+    /**
+     * 是否可用
+     */
     protected volatile boolean available = true;
+    /**
+     * 是否清理干净
+     */
     protected volatile boolean cleanupOver = false;
+    /**
+     * 第一次调用shutdown方法的时间戳
+     */
     private volatile long firstShutdownTimestamp = 0;
 
 
@@ -84,22 +96,28 @@ public abstract class ReferenceResource {
      * 释放资源
      */
     public void release() {
-        long value = this.refCount.decrementAndGet();
-        if (value > 0)
+        long value = this.refCount.decrementAndGet();//引用数减1
+        if (value > 0)//引用数还是大于0则资源不释放
             return;
 
-        synchronized (this) {
+        synchronized (this) {//引用数小于等于0资源可释放，并将执行资源清理方法
             // cleanup内部要对是否clean做处理
             this.cleanupOver = this.cleanup(value);
         }
     }
 
-
+    /**
+     * 资源清理程序由子类实现
+     * @param currentRef
+     * @return
+     */
     public abstract boolean cleanup(final long currentRef);
 
 
     /**
      * 资源是否被清理完成
+     *      1，引用数小于等于0，代表可以执行清理工作
+     *      2，cleanupOver=true,代表清理工作执行过
      */
     public boolean isCleanupOver() {
         return this.refCount.get() <= 0 && this.cleanupOver;
