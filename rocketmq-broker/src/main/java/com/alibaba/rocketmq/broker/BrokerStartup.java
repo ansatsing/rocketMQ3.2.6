@@ -233,6 +233,7 @@ public class BrokerStartup {
                 System.exit(-3);
             }
 
+            //idea环境debug虚拟机钩子线程需点击Exit按钮
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {//钩子线程可能出现并发情况
                 private volatile boolean hasShutdown = false;
                 private AtomicInteger shutdownTimes = new AtomicInteger(0);
