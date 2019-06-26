@@ -31,6 +31,7 @@ import com.alibaba.rocketmq.common.constant.LoggerName;
 
 /**
  * 记录存储模型最终一致的时间点
+ * ***异常恢复才用到此类，即broker启动时存在abort文件
  * 
  * @author shijia.wxr<vintage.wang@gmail.com>
  * @since 2013-7-21
@@ -40,8 +41,17 @@ public class StoreCheckpoint {
     private final RandomAccessFile randomAccessFile;
     private final FileChannel fileChannel;
     private final MappedByteBuffer mappedByteBuffer;
+    /**
+     * commitLog最后刷盘时间
+     */
     private volatile long physicMsgTimestamp = 0;
+    /**
+     * consumeQueue最后刷盘时间
+     */
     private volatile long logicsMsgTimestamp = 0;
+    /**
+     * 索引最后刷盘时间
+     */
     private volatile long indexMsgTimestamp = 0;
 
 
