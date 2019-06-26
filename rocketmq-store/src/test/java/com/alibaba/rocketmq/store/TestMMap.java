@@ -18,7 +18,7 @@ import java.nio.channels.FileChannel;
  *      mmap传送一个文件到其他电脑的步骤【2次复制】
  *          从硬盘读取数据到内存，然后复制到网卡，最后发送出去。
  *
- * 通过3种方式把1g的数据写入硬盘。
+ * 通过3种方式把1g的数据写入硬盘并比较花费时间。
  */
 public class TestMMap {
     private static final long Max_Size = Integer.MAX_VALUE;//1G大小
