@@ -73,7 +73,9 @@ public class NamesrvStartup {
 
     public static NamesrvController main0(String[] args) {
         System.setProperty(RemotingCommand.RemotingVersionKey, Integer.toString(MQVersion.CurrentVersion));
-
+        /***
+         * socket发送缓冲区和接收缓冲区，参考https://blog.csdn.net/smartfox80/article/details/22578735
+         */
         // Socket发送缓冲区大小
         if (null == System.getProperty(NettySystemConfig.SystemPropertySocketSndbufSize)) {
             NettySystemConfig.SocketSndbufSize = 2048;
@@ -102,7 +104,7 @@ public class NamesrvStartup {
             final NamesrvConfig namesrvConfig = new NamesrvConfig();
             final NettyServerConfig nettyServerConfig = new NettyServerConfig();
             nettyServerConfig.setListenPort(9876);
-            if (commandLine.hasOption('c')) {
+            if (commandLine.hasOption('c')) {//启动时带配置文件参数,比如-c /antsing/home/nameSrv.conf
                 String file = commandLine.getOptionValue('c');
                 if (file != null) {
                     InputStream in = new BufferedInputStream(new FileInputStream(file));
@@ -122,6 +124,7 @@ public class NamesrvStartup {
                 System.exit(0);
             }
 
+            //启动这样参数,比如autoCreateTopicEnable=true
             MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), namesrvConfig);
 
             if (null == namesrvConfig.getRocketmqHome()) {
