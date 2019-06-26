@@ -74,7 +74,13 @@ public class MapedFile extends ReferenceResource {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.file = new File(fileName);
-        this.fileFromOffset = Long.parseLong(this.file.getName());
+        /**
+         * 文件名就是起始偏移量【相对于文件size,跟内存地址和硬盘地址无关】，每个文件固定大小1g。存储消息文件名如下：
+         *          序号                      文件名                 文件起始偏移量
+         *      第一个存储消息的文件名     00000000000000000000         0
+         *      第二个存储消息的文件名     00000000001073741824         1g=1024*1024*1024=1073741824
+         */
+        this.fileFromOffset = Long.parseLong(this.file.getName());//这行代码推断只有commitlog目录下的文件才会用到此类，mmap本身用途也是针对大文件。
         boolean ok = false;
 
         ensureDirOK(this.file.getParent());
@@ -101,7 +107,10 @@ public class MapedFile extends ReferenceResource {
         }
     }
 
-
+    /**
+     * 确保目录存在，不存在就创建
+     * @param dirName
+     */
     public static void ensureDirOK(final String dirName) {
         if (dirName != null) {
             File f = new File(dirName);
